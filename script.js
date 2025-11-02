@@ -4031,3 +4031,277 @@ document.addEventListener('DOMContentLoaded', function() {
     addDropdownAnimations();
     setTimeout(initInteractiveDropdowns, 300);
 });
+
+// ============================================
+// MESSAGE TO ELL FORM - WEB3FORMS INTEGRATION
+// ============================================
+
+// Web3Forms Access Key - GANTI INI DENGAN ACCESS KEY KAMU!
+// Dapatkan di: https://web3forms.com/
+const WEB3FORMS_ACCESS_KEY = '2e13140b-70bd-44b7-a587-af1b3c731bc1'; // ⚠️ GANTI INI!
+
+// Initialize Message to Ell Form
+function initMessageToEllForm() {
+    const messageForm = document.getElementById('messageEllForm');
+    const messageSubject = document.getElementById('messageSubject');
+    const messageContent = document.getElementById('messageContent');
+    const charCount = document.getElementById('charCount');
+    const clearMessageBtn = document.getElementById('clearMessageBtn');
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
+    const messageSuccess = document.getElementById('messageSuccess');
+    
+    if (!messageForm) return;
+    
+    // Character counter
+    if (messageContent && charCount) {
+        messageContent.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            // Change color if approaching limit
+            if (length > 900) {
+                charCount.style.color = 'var(--danger)';
+            } else if (length > 800) {
+                charCount.style.color = 'var(--warning)';
+            } else {
+                charCount.style.color = 'var(--accent)';
+            }
+            
+            // Limit to 1000 characters
+            if (length > 1000) {
+                this.value = this.value.substring(0, 1000);
+                charCount.textContent = 1000;
+            }
+        });
+    }
+    
+    // Clear form
+    if (clearMessageBtn) {
+        clearMessageBtn.addEventListener('click', function() {
+            if (messageSubject) messageSubject.value = '';
+            if (messageContent) {
+                messageContent.value = '';
+                if (charCount) charCount.textContent = '0';
+            }
+            
+            // Reset mood to default
+            const defaultMood = document.getElementById('mood-happy');
+            if (defaultMood) defaultMood.checked = true;
+            
+            // Hide success message
+            if (messageSuccess) messageSuccess.style.display = 'none';
+            if (messageForm) messageForm.style.display = 'flex';
+            
+            // Play sound
+            if (soundEnabled) {
+                playSound('click');
+            }
+        });
+    }
+    
+    // Form submission
+    if (messageForm) {
+        messageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const subject = messageSubject?.value.trim() || '';
+            const content = messageContent?.value.trim() || '';
+            const moodRadio = document.querySelector('input[name="mood"]:checked');
+            const mood = moodRadio?.value || '😊 Happy';
+            
+            // Validation
+            if (!subject || !content) {
+                showNotification('Mohon isi semua field yang wajib!', 'error');
+                return;
+            }
+            
+            if (content.length < 10) {
+                showNotification('Pesan terlalu pendek. Minimal 10 karakter!', 'error');
+                return;
+            }
+            
+            // Check if access key is set (validate it's not empty or default placeholder)
+            if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === '' || WEB3FORMS_ACCESS_KEY === '2e13140b-70bd-44b7-a587-af1b3c731bc1                      ') {
+                showNotification('⚠️ Web3Forms Access Key belum diatur! Silakan set di script.js', 'warning');
+                console.error('Web3Forms Access Key belum diatur. Dapatkan di: https://web3forms.com/');
+                return;
+            }
+            
+            console.log('Sending message with access key:', WEB3FORMS_ACCESS_KEY.substring(0, 10) + '...');
+            
+            // Disable button and show loading
+            if (sendMessageBtn) {
+                sendMessageBtn.disabled = true;
+                const btnText = sendMessageBtn.querySelector('.btn-text');
+                const btnLoading = sendMessageBtn.querySelector('.btn-loading');
+                if (btnText) btnText.style.display = 'none';
+                if (btnLoading) btnLoading.style.display = 'flex';
+            }
+            
+            try {
+                // Prepare form data for Web3Forms
+                // Format sesuai dengan dokumentasi Web3Forms: https://docs.web3forms.com/
+                const formData = {
+                    access_key: WEB3FORMS_ACCESS_KEY,
+                    subject: `💕 Pesan dari Shana: ${subject}`,
+                    message: `Mood: ${mood}\n\nSubjek: ${subject}\n\nPesan:\n${content}\n\n---\nDikirim dari Task4Shana App 💖`,
+                    from_name: 'Shana - Task4Shana',
+                    // Email field optional, bisa dihapus jika tidak diperlukan
+                };
+                
+                // Send to Web3Forms API
+                console.log('🚀 Mengirim pesan ke Web3Forms...');
+                console.log('Access Key:', WEB3FORMS_ACCESS_KEY.substring(0, 15) + '...');
+                console.log('Form Data (without key):', { ...formData, access_key: '***' });
+                
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                console.log('📡 Response status:', response.status);
+                
+                // Check if response is ok
+                if (!response.ok) {
+                    let errorText;
+                    try {
+                        errorText = await response.text();
+                    } catch (e) {
+                        errorText = 'Unknown error';
+                    }
+                    console.error('❌ HTTP Error:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                // Parse JSON response
+                let result;
+                try {
+                    const responseText = await response.text();
+                    console.log('📄 Raw response:', responseText);
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    throw new Error('Invalid response from server');
+                }
+                
+                console.log('✅ Response data:', result);
+                
+                if (result.success) {
+                    // Success!
+                    if (messageForm) messageForm.style.display = 'none';
+                    if (messageSuccess) messageSuccess.style.display = 'block';
+                    
+                    // Play success sound
+                    if (soundEnabled) {
+                        playSound('success');
+                    }
+                    
+                    // Show notification
+                    showNotification('Pesan berhasil dikirim ke Ell! 💕', 'success');
+                    
+                    // Auto-scroll to success message
+                    messageSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Reset form after 5 seconds
+                    setTimeout(() => {
+                        if (messageSubject) messageSubject.value = '';
+                        if (messageContent) {
+                            messageContent.value = '';
+                            if (charCount) charCount.textContent = '0';
+                        }
+                        const defaultMood = document.getElementById('mood-happy');
+                        if (defaultMood) defaultMood.checked = true;
+                        if (messageSuccess) messageSuccess.style.display = 'none';
+                        if (messageForm) messageForm.style.display = 'flex';
+                    }, 5000);
+                    
+                } else {
+                    // Log detailed error
+                    console.error('Web3Forms Error:', result);
+                    const errorMsg = result.message || result.error || 'Failed to send message';
+                    showNotification(`Gagal mengirim: ${errorMsg}`, 'error');
+                    throw new Error(errorMsg);
+                }
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                const errorMessage = error.message || 'Gagal mengirim pesan. Silakan coba lagi nanti.';
+                showNotification(errorMessage, 'error');
+            } finally {
+                // Re-enable button
+                if (sendMessageBtn) {
+                    sendMessageBtn.disabled = false;
+                    const btnText = sendMessageBtn.querySelector('.btn-text');
+                    const btnLoading = sendMessageBtn.querySelector('.btn-loading');
+                    if (btnText) btnText.style.display = 'flex';
+                    if (btnLoading) btnLoading.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    // Add floating particles effect when typing
+    if (messageContent) {
+        let typingTimeout;
+        messageContent.addEventListener('input', function() {
+            clearTimeout(typingTimeout);
+            
+            // Create floating heart effect
+            if (this.value.length % 10 === 0 && this.value.length > 0) {
+                createFloatingHeart(this);
+            }
+            
+            typingTimeout = setTimeout(() => {
+                // Stop effects after 2 seconds of no typing
+            }, 2000);
+        });
+    }
+}
+
+// Create floating heart effect
+function createFloatingHeart(element) {
+    const heart = document.createElement('div');
+    heart.innerHTML = '💕';
+    heart.style.cssText = `
+        position: absolute;
+        font-size: 20px;
+        pointer-events: none;
+        z-index: 1000;
+        animation: floatHeart 2s ease-out forwards;
+    `;
+    
+    const rect = element.getBoundingClientRect();
+    heart.style.left = (rect.left + rect.width / 2) + 'px';
+    heart.style.top = (rect.top + 20) + 'px';
+    
+    document.body.appendChild(heart);
+    
+    setTimeout(() => {
+        heart.remove();
+    }, 2000);
+}
+
+// Add CSS for floating heart animation
+const floatHeartStyle = document.createElement('style');
+floatHeartStyle.textContent = `
+    @keyframes floatHeart {
+        0% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-100px) scale(1.5);
+        }
+    }
+`;
+document.head.appendChild(floatHeartStyle);
+
+// Initialize message form when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initMessageToEllForm, 500);
+});

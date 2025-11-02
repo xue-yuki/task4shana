@@ -503,6 +503,106 @@
     </div>
     <button class="new-quote-btn"><i class="fas fa-sync-alt"></i> Quote Baru</button>
 </div>
+
+<!-- 6. KOMPONEN KIRIM PESAN KE ELL -->
+<div class="box message-ell">
+    <div class="message-header">
+        <div class="message-title-wrapper">
+            <h3>Kirim Pesan untuk Ell</h3>
+            <p class="message-subtitle">Tuliskan apa yang ingin kamu sampaikan ke Ell 💕</p>
+        </div>
+    </div>
+    
+    <form id="messageEllForm" class="message-form">
+        <div class="form-group-message">
+            <label for="messageSubject">
+                <i class="fas fa-tag"></i> Subjek Pesan
+            </label>
+            <input 
+                type="text" 
+                id="messageSubject" 
+                name="subject" 
+                placeholder="Contoh: Hai Ell, ada yang mau aku ceritain..."
+                required
+            >
+        </div>
+        
+        <div class="form-group-message">
+            <label for="messageContent">
+                <i class="fas fa-envelope-open-text"></i> Isi Pesan
+            </label>
+            <textarea 
+                id="messageContent" 
+                name="message" 
+                rows="6" 
+                placeholder="Tuliskan pesanmu di sini... Ell akan senang membaca pesan darimu! 😊"
+                required
+            ></textarea>
+            <div class="char-count">
+                <span id="charCount">0</span> / 1000 karakter
+            </div>
+        </div>
+        
+        <div class="form-group-message">
+            <label for="messageMood">
+                <i class="fas fa-smile"></i> Mood Hari Ini
+            </label>
+            <div class="mood-selector">
+                <input type="radio" id="mood-happy" name="mood" value="😊 Happy" checked>
+                <label for="mood-happy" class="mood-option">
+                    <span class="mood-emoji">😊</span>
+                    <span class="mood-text">Happy</span>
+                </label>
+                
+                <input type="radio" id="mood-love" name="mood" value="💕 Love">
+                <label for="mood-love" class="mood-option">
+                    <span class="mood-emoji">💕</span>
+                    <span class="mood-text">Love</span>
+                </label>
+                
+                <input type="radio" id="mood-excited" name="mood" value="🎉 Excited">
+                <label for="mood-excited" class="mood-option">
+                    <span class="mood-emoji">🎉</span>
+                    <span class="mood-text">Excited</span>
+                </label>
+                
+                <input type="radio" id="mood-tired" name="mood" value="😴 Tired">
+                <label for="mood-tired" class="mood-option">
+                    <span class="mood-emoji">😴</span>
+                    <span class="mood-text">Tired</span>
+                </label>
+                
+                <input type="radio" id="mood-sad" name="mood" value="😢 Sad">
+                <label for="mood-sad" class="mood-option">
+                    <span class="mood-emoji">😢</span>
+                    <span class="mood-text">Sad</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" id="clearMessageBtn" class="btn-clear">
+                <i class="fas fa-eraser"></i> Hapus
+            </button>
+            <button type="submit" id="sendMessageBtn" class="btn-send">
+                <span class="btn-text">
+                    <i class="fas fa-paper-plane"></i> Kirim ke Ell
+                </span>
+                <span class="btn-loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Mengirim...
+                </span>
+            </button>
+        </div>
+    </form>
+    
+    <div class="message-success" id="messageSuccess" style="display: none;">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h4>Pesan Terkirim! 💕</h4>
+        <p>Pesanmu sudah dikirim ke Ell. Ell akan senang membaca pesan darimu!</p>
+    </div>
+</div>
     </div>
 
     
