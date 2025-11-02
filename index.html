@@ -64,22 +64,8 @@
             <div class="box">
                 <h2><i class="fas fa-plus-circle"></i> Tambah Tugas Baru</h2>
                 
-                <!-- [BARU] Fitur Tambah dengan AI -->
-                <div class="ai-task-input-container">
-                    <h4><i class="fas fa-magic"></i> Tambah Cepat dengan AI</h4>
-                    <div class="ai-input-wrapper">
-                        <input type="text" id="aiTaskInput" placeholder="Contoh: Belajar bareng Sasa besok sore...">
-                        <button id="addAiTaskBtn"><i class="fas fa-rocket"></i> Proses</button>
-                    </div>
-                    <div class="ai-loader">
-                        <i class="fas fa-spinner fa-spin"></i> Memproses permintaan...
-                    </div>
-                </div>
-
-                <hr class="ai-divider">
-
                 <div class="task-input">
-                    <input type="text" id="taskInput" placeholder="Atau masukkan manual di sini...">
+                    <input type="text" id="taskInput" placeholder="Masukkan nama tugas...">
                     <select id="categorySelect">
                         <option value="Sekolah">Sekolah</option>
                         <option value="Pribadi">Pribadi</option>
@@ -613,9 +599,266 @@
         </div>
     </div>
     
+    <!-- Music & Sound Control Panel -->
+    <div class="modal" id="musicModal">
+        <div class="modal-content music-modal-content">
+            <button class="modal-close" id="musicModalClose"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title"><i class="fas fa-music"></i> Musik & Suara Interaktif</h3>
+            
+            <!-- Tabs -->
+            <div class="music-tabs">
+                <button class="music-tab active" data-tab="background-music">
+                    <i class="fas fa-headphones"></i> Background Music
+                </button>
+                <button class="music-tab" data-tab="ambient-sounds">
+                    <i class="fas fa-water"></i> Ambient Sounds
+                </button>
+                <button class="music-tab" data-tab="white-noise">
+                    <i class="fas fa-wave-square"></i> White Noise
+                </button>
+                <button class="music-tab" data-tab="sound-effects">
+                    <i class="fas fa-volume-up"></i> Sound Effects
+                </button>
+            </div>
+            
+            <!-- Background Music Panel -->
+            <div class="music-panel active" id="background-music-panel">
+                <div class="music-player">
+                    <div class="now-playing">
+                        <div class="now-playing-info">
+                            <i class="fas fa-music"></i>
+                            <div>
+                                <div class="track-title" id="currentTrackTitle">Pilih lagu...</div>
+                                <div class="track-type" id="currentTrackType">-</div>
+                            </div>
+                        </div>
+                        <div class="player-controls">
+                            <button class="player-btn" id="prevTrack"><i class="fas fa-step-backward"></i></button>
+                            <button class="player-btn play-pause-btn" id="playPauseMusic">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="player-btn" id="nextTrack"><i class="fas fa-step-forward"></i></button>
+                        </div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-down"></i>
+                            <input type="range" id="musicVolume" min="0" max="100" value="50" class="volume-slider">
+                            <i class="fas fa-volume-up"></i>
+                            <span class="volume-value" id="musicVolumeValue">50%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="playlist-section">
+                        <h4><i class="fas fa-list"></i> Pilih Playlist</h4>
+                        <div class="playlist-grid">
+                            <div class="playlist-card" data-playlist="lofi">
+                                <div class="playlist-icon"><i class="fas fa-headphones"></i></div>
+                                <div class="playlist-name">Lo-Fi Hip Hop</div>
+                                <div class="playlist-desc">Musik santai untuk fokus</div>
+                            </div>
+                            <div class="playlist-card" data-playlist="nature">
+                                <div class="playlist-icon"><i class="fas fa-leaf"></i></div>
+                                <div class="playlist-name">Nature Sounds</div>
+                                <div class="playlist-desc">Suara alam yang menenangkan</div>
+                            </div>
+                            <div class="playlist-card" data-playlist="classical">
+                                <div class="playlist-icon"><i class="fas fa-music"></i></div>
+                                <div class="playlist-name">Classical</div>
+                                <div class="playlist-desc">Musik klasik untuk produktivitas</div>
+                            </div>
+                            <div class="playlist-card" data-playlist="jazz">
+                                <div class="playlist-icon"><i class="fas fa-guitar"></i></div>
+                                <div class="playlist-name">Jazz & Blues</div>
+                                <div class="playlist-desc">Jazz yang menenangkan</div>
+                            </div>
+                        </div>
+                        
+                        <div class="custom-playlist-section">
+                            <h4><i class="fas fa-upload"></i> Custom Playlist</h4>
+                            <div class="upload-area" id="uploadPlaylistArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Upload file musik atau playlist</p>
+                                <p class="upload-hint">Format: MP3, WAV, OGG</p>
+                                <input type="file" id="playlistFileInput" accept="audio/*" multiple style="display: none;">
+                                <button class="upload-btn" id="uploadPlaylistBtn">Pilih File</button>
+                            </div>
+                            <div class="custom-tracks-list" id="customTracksList">
+                                <!-- Custom tracks will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ambient Sounds Panel -->
+            <div class="music-panel" id="ambient-sounds-panel">
+                <h4><i class="fas fa-sound"></i> Pilih Suara Ambient</h4>
+                <div class="ambient-sounds-grid">
+                    <div class="ambient-sound-card" data-sound="rain">
+                        <div class="sound-icon"><i class="fas fa-cloud-rain"></i></div>
+                        <div class="sound-name">Hujan</div>
+                        <div class="sound-controls">
+                            <button class="sound-toggle-btn" data-sound-id="rain">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <input type="range" class="sound-volume" data-sound-id="rain" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="ambient-sound-card" data-sound="cafe">
+                        <div class="sound-icon"><i class="fas fa-coffee"></i></div>
+                        <div class="sound-name">Kafe</div>
+                        <div class="sound-controls">
+                            <button class="sound-toggle-btn" data-sound-id="cafe">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <input type="range" class="sound-volume" data-sound-id="cafe" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="ambient-sound-card" data-sound="forest">
+                        <div class="sound-icon"><i class="fas fa-tree"></i></div>
+                        <div class="sound-name">Hutan</div>
+                        <div class="sound-controls">
+                            <button class="sound-toggle-btn" data-sound-id="forest">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <input type="range" class="sound-volume" data-sound-id="forest" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="ambient-sound-card" data-sound="ocean">
+                        <div class="sound-icon"><i class="fas fa-water"></i></div>
+                        <div class="sound-name">Laut</div>
+                        <div class="sound-controls">
+                            <button class="sound-toggle-btn" data-sound-id="ocean">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <input type="range" class="sound-volume" data-sound-id="ocean" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="ambient-sound-card" data-sound="fire">
+                        <div class="sound-icon"><i class="fas fa-fire"></i></div>
+                        <div class="sound-name">Api Unggun</div>
+                        <div class="sound-controls">
+                            <button class="sound-toggle-btn" data-sound-id="fire">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <input type="range" class="sound-volume" data-sound-id="fire" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="ambient-sound-card" data-sound="city">
+                        <div class="sound-icon"><i class="fas fa-city"></i></div>
+                        <div class="sound-name">Kota</div>
+                        <div class="sound-controls">
+                            <button class="sound-toggle-btn" data-sound-id="city">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <input type="range" class="sound-volume" data-sound-id="city" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- White Noise Panel -->
+            <div class="music-panel" id="white-noise-panel">
+                <h4><i class="fas fa-wave-square"></i> White Noise Generator</h4>
+                <div class="white-noise-controls">
+                    <div class="noise-type-selector">
+                        <label>Jenis White Noise:</label>
+                        <select id="noiseType">
+                            <option value="white">White Noise (Standard)</option>
+                            <option value="pink">Pink Noise (Menenangkan)</option>
+                            <option value="brown">Brown Noise (Deep)</option>
+                            <option value="rain-static">Rain Static</option>
+                        </select>
+                    </div>
+                    <div class="noise-player">
+                        <button class="noise-toggle-btn" id="noiseToggleBtn">
+                            <i class="fas fa-play"></i> <span>Mulai White Noise</span>
+                        </button>
+                        <div class="noise-volume-control">
+                            <label>Volume: <span id="noiseVolumeValue">50%</span></label>
+                            <input type="range" id="noiseVolume" min="0" max="100" value="50" class="volume-slider">
+                        </div>
+                        <div class="noise-frequency-control" id="frequencyControl" style="display: none;">
+                            <label>Frequency: <span id="frequencyValue">440 Hz</span></label>
+                            <input type="range" id="frequencyRange" min="20" max="20000" value="440" step="10">
+                        </div>
+                    </div>
+                    <div class="noise-info">
+                        <p><i class="fas fa-info-circle"></i> White noise membantu meningkatkan fokus dan konsentrasi dengan menutupi suara distraksi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sound Effects Panel -->
+            <div class="music-panel" id="sound-effects-panel">
+                <h4><i class="fas fa-volume-up"></i> Sound Effects</h4>
+                <div class="sound-effects-controls">
+                    <div class="effect-toggle">
+                        <label>
+                            <input type="checkbox" id="enableSoundEffects" checked>
+                            Aktifkan Sound Effects
+                        </label>
+                    </div>
+                    
+                    <div class="effects-list">
+                        <div class="effect-item">
+                            <span class="effect-name">Complete Task</span>
+                            <select class="effect-select" data-effect="complete">
+                                <option value="success1">Success Chime 1</option>
+                                <option value="success2">Success Chime 2</option>
+                                <option value="bell">Bell</option>
+                                <option value="ding">Ding</option>
+                            </select>
+                            <button class="test-effect-btn" data-effect="complete"><i class="fas fa-play"></i> Test</button>
+                        </div>
+                        <div class="effect-item">
+                            <span class="effect-name">Add Task</span>
+                            <select class="effect-select" data-effect="add">
+                                <option value="pop">Pop</option>
+                                <option value="click">Click</option>
+                                <option value="whoosh">Whoosh</option>
+                            </select>
+                            <button class="test-effect-btn" data-effect="add"><i class="fas fa-play"></i> Test</button>
+                        </div>
+                        <div class="effect-item">
+                            <span class="effect-name">Delete Task</span>
+                            <select class="effect-select" data-effect="delete">
+                                <option value="trash">Trash</option>
+                                <option value="swoosh">Swoosh</option>
+                            </select>
+                            <button class="test-effect-btn" data-effect="delete"><i class="fas fa-play"></i> Test</button>
+                        </div>
+                        <div class="effect-item">
+                            <span class="effect-name">Achievement</span>
+                            <select class="effect-select" data-effect="achievement">
+                                <option value="celebration">Celebration</option>
+                                <option value="fanfare">Fanfare</option>
+                                <option value="victory">Victory</option>
+                            </select>
+                            <button class="test-effect-btn" data-effect="achievement"><i class="fas fa-play"></i> Test</button>
+                        </div>
+                        <div class="effect-item">
+                            <span class="effect-name">Timer</span>
+                            <select class="effect-select" data-effect="timer">
+                                <option value="tick">Tick</option>
+                                <option value="tock">Tock</option>
+                                <option value="alarm">Alarm</option>
+                            </select>
+                            <button class="test-effect-btn" data-effect="timer"><i class="fas fa-play"></i> Test</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="audio-controls">
-        <div class="audio-btn" id="toggleMusic"><i class="fas fa-music"></i></div>
-        <div class="audio-btn" id="toggleSound"><i class="fas fa-volume-up"></i></div>
+        <div class="audio-btn" id="toggleMusic" title="Music & Sound Settings">
+            <i class="fas fa-music"></i>
+            <span class="audio-badge" id="musicBadge"></span>
+        </div>
+        <div class="audio-btn" id="toggleSound" title="Toggle Sound Effects">
+            <i class="fas fa-volume-up"></i>
+        </div>
     </div>
       
     <script src="script.js"></script>

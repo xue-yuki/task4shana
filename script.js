@@ -3076,3 +3076,958 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inisialisasi komponen galeri foto setelah komponen lain dimuat
     setTimeout(initPhotoGallery, 300);
 });
+
+// ============================================
+// MUSIC & SOUND INTERACTIVE FEATURES
+// ============================================
+
+// Music & Sound State
+let musicState = {
+    currentPlaylist: null,
+    currentTrackIndex: 0,
+    isPlaying: false,
+    volume: 50,
+    customTracks: JSON.parse(localStorage.getItem('customTracks')) || [],
+    currentAudio: null
+};
+
+let ambientSounds = {};
+let whiteNoise = null;
+let whiteNoiseNode = null;
+let audioContext = null;
+
+// Sound Effects Configuration
+let soundEffectsConfig = JSON.parse(localStorage.getItem('soundEffectsConfig')) || {
+    complete: 'success1',
+    add: 'pop',
+    delete: 'trash',
+    achievement: 'celebration',
+    timer: 'tick'
+};
+
+// Default Playlists (Using free audio URLs or generating programmatically)
+const playlists = {
+    lofi: {
+        name: 'Lo-Fi Hip Hop',
+        type: 'Lo-Fi',
+        tracks: [
+            { name: 'Lo-Fi Chill Beat 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+            { name: 'Lo-Fi Chill Beat 2', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+            { name: 'Lo-Fi Chill Beat 3', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
+        ]
+    },
+    nature: {
+        name: 'Nature Sounds',
+        type: 'Nature',
+        tracks: [
+            { name: 'Forest Birds', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+            { name: 'Ocean Waves', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+            { name: 'Rain Drops', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
+        ]
+    },
+    classical: {
+        name: 'Classical',
+        type: 'Classical',
+        tracks: [
+            { name: 'Classical Piece 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+            { name: 'Classical Piece 2', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+            { name: 'Classical Piece 3', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
+        ]
+    },
+    jazz: {
+        name: 'Jazz & Blues',
+        type: 'Jazz',
+        tracks: [
+            { name: 'Jazz Smooth 1', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+            { name: 'Jazz Smooth 2', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+            { name: 'Jazz Smooth 3', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
+        ]
+    }
+};
+
+// Initialize Music & Sound Features
+function initMusicAndSound() {
+    // Get DOM elements
+    const musicModal = document.getElementById('musicModal');
+    const musicModalClose = document.getElementById('musicModalClose');
+    const musicTabs = document.querySelectorAll('.music-tab');
+    const musicPanels = document.querySelectorAll('.music-panel');
+    
+    // Open music modal
+    const toggleMusicBtn = document.getElementById('toggleMusic');
+    if (toggleMusicBtn) {
+        toggleMusicBtn.addEventListener('click', () => {
+            musicModal.classList.add('show');
+        });
+    }
+    
+    // Close music modal
+    if (musicModalClose) {
+        musicModalClose.addEventListener('click', () => {
+            musicModal.classList.remove('show');
+        });
+    }
+    
+    // Tab switching
+    musicTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTab = tab.getAttribute('data-tab');
+            
+            // Remove active from all tabs and panels
+            musicTabs.forEach(t => t.classList.remove('active'));
+            musicPanels.forEach(p => p.classList.remove('active'));
+            
+            // Add active to clicked tab and corresponding panel
+            tab.classList.add('active');
+            document.getElementById(`${targetTab}-panel`).classList.add('active');
+        });
+    });
+    
+    // Initialize background music player
+    initBackgroundMusic();
+    
+    // Initialize ambient sounds
+    initAmbientSounds();
+    
+    // Initialize white noise
+    initWhiteNoise();
+    
+    // Initialize sound effects
+    initSoundEffects();
+    
+    // Load custom tracks
+    loadCustomTracks();
+    
+    // Update music badge
+    updateMusicBadge();
+}
+
+// Background Music Player
+function initBackgroundMusic() {
+    const playlistCards = document.querySelectorAll('.playlist-card');
+    const playPauseBtn = document.getElementById('playPauseMusic');
+    const prevTrackBtn = document.getElementById('prevTrack');
+    const nextTrackBtn = document.getElementById('nextTrack');
+    const musicVolumeSlider = document.getElementById('musicVolume');
+    const musicVolumeValue = document.getElementById('musicVolumeValue');
+    const currentTrackTitle = document.getElementById('currentTrackTitle');
+    const currentTrackType = document.getElementById('currentTrackType');
+    const uploadPlaylistBtn = document.getElementById('uploadPlaylistBtn');
+    const playlistFileInput = document.getElementById('playlistFileInput');
+    
+    // Select playlist
+    playlistCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const playlistId = card.getAttribute('data-playlist');
+            
+            // Remove active from all cards
+            playlistCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            // Load playlist
+            loadPlaylist(playlistId);
+        });
+    });
+    
+    // Play/Pause
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', () => {
+            toggleMusicPlayback();
+        });
+    }
+    
+    // Previous track
+    if (prevTrackBtn) {
+        prevTrackBtn.addEventListener('click', () => {
+            playPreviousTrack();
+        });
+    }
+    
+    // Next track
+    if (nextTrackBtn) {
+        nextTrackBtn.addEventListener('click', () => {
+            playNextTrack();
+        });
+    }
+    
+    // Volume control
+    if (musicVolumeSlider) {
+        musicVolumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value;
+            musicState.volume = volume;
+            if (musicVolumeValue) musicVolumeValue.textContent = `${volume}%`;
+            if (musicState.currentAudio) {
+                musicState.currentAudio.volume = volume / 100;
+            }
+            localStorage.setItem('musicVolume', volume);
+        });
+        
+        // Load saved volume
+        const savedVolume = localStorage.getItem('musicVolume');
+        if (savedVolume) {
+            musicVolumeSlider.value = savedVolume;
+            musicState.volume = savedVolume;
+            if (musicVolumeValue) musicVolumeValue.textContent = `${savedVolume}%`;
+        }
+    }
+    
+    // Upload custom playlist
+    if (uploadPlaylistBtn) {
+        uploadPlaylistBtn.addEventListener('click', () => {
+            playlistFileInput.click();
+        });
+    }
+    
+    if (playlistFileInput) {
+        playlistFileInput.addEventListener('change', (e) => {
+            handlePlaylistUpload(e.target.files);
+        });
+    }
+}
+
+function loadPlaylist(playlistId) {
+    if (!playlists[playlistId]) return;
+    
+    musicState.currentPlaylist = playlists[playlistId];
+    musicState.currentTrackIndex = 0;
+    
+    updateCurrentTrackDisplay();
+    
+    // Stop current audio
+    if (musicState.currentAudio) {
+        musicState.currentAudio.pause();
+        musicState.currentAudio = null;
+    }
+    
+    // Auto play first track
+    playCurrentTrack();
+}
+
+function playCurrentTrack() {
+    if (!musicState.currentPlaylist) return;
+    
+    const playlist = musicState.currentPlaylist;
+    const track = playlist.tracks[musicState.currentTrackIndex];
+    
+    if (!track) return;
+    
+    // Stop current audio
+    if (musicState.currentAudio) {
+        musicState.currentAudio.pause();
+    }
+    
+    // Create new audio
+    const audio = new Audio(track.url);
+    audio.volume = musicState.volume / 100;
+    audio.loop = false;
+    
+    // When track ends, play next
+    audio.addEventListener('ended', () => {
+        playNextTrack();
+    });
+    
+    audio.play().catch(err => {
+        console.log('Audio play failed:', err);
+        showNotification('Tidak dapat memutar musik. Silakan upload file musik sendiri.', 'warning');
+    });
+    
+    musicState.currentAudio = audio;
+    musicState.isPlaying = true;
+    updatePlayButton();
+    updateCurrentTrackDisplay();
+}
+
+function toggleMusicPlayback() {
+    if (!musicState.currentAudio) {
+        if (musicState.currentPlaylist) {
+            playCurrentTrack();
+        } else {
+            showNotification('Pilih playlist terlebih dahulu!', 'warning');
+        }
+        return;
+    }
+    
+    if (musicState.isPlaying) {
+        musicState.currentAudio.pause();
+        musicState.isPlaying = false;
+    } else {
+        musicState.currentAudio.play();
+        musicState.isPlaying = true;
+    }
+    updatePlayButton();
+}
+
+function playPreviousTrack() {
+    if (!musicState.currentPlaylist) return;
+    
+    musicState.currentTrackIndex--;
+    if (musicState.currentTrackIndex < 0) {
+        musicState.currentTrackIndex = musicState.currentPlaylist.tracks.length - 1;
+    }
+    playCurrentTrack();
+}
+
+function playNextTrack() {
+    if (!musicState.currentPlaylist) return;
+    
+    musicState.currentTrackIndex++;
+    if (musicState.currentTrackIndex >= musicState.currentPlaylist.tracks.length) {
+        musicState.currentTrackIndex = 0;
+    }
+    playCurrentTrack();
+}
+
+function updatePlayButton() {
+    const playPauseBtn = document.getElementById('playPauseMusic');
+    if (!playPauseBtn) return;
+    
+    const icon = playPauseBtn.querySelector('i');
+    if (musicState.isPlaying) {
+        icon.className = 'fas fa-pause';
+    } else {
+        icon.className = 'fas fa-play';
+    }
+}
+
+function updateCurrentTrackDisplay() {
+    const currentTrackTitle = document.getElementById('currentTrackTitle');
+    const currentTrackType = document.getElementById('currentTrackType');
+    
+    if (!musicState.currentPlaylist) {
+        if (currentTrackTitle) currentTrackTitle.textContent = 'Pilih lagu...';
+        if (currentTrackType) currentTrackType.textContent = '-';
+        return;
+    }
+    
+    const track = musicState.currentPlaylist.tracks[musicState.currentTrackIndex];
+    if (currentTrackTitle) currentTrackTitle.textContent = track.name;
+    if (currentTrackType) currentTrackType.textContent = musicState.currentPlaylist.type;
+}
+
+function handlePlaylistUpload(files) {
+    const customTracks = [];
+    
+    Array.from(files).forEach(file => {
+        if (file.type.startsWith('audio/')) {
+            const url = URL.createObjectURL(file);
+            customTracks.push({
+                name: file.name.replace(/\.[^/.]+$/, ''),
+                url: url,
+                file: file
+            });
+        }
+    });
+    
+    musicState.customTracks = [...musicState.customTracks, ...customTracks];
+    localStorage.setItem('customTracks', JSON.stringify(musicState.customTracks.map(t => ({ name: t.name, url: t.url }))));
+    
+    renderCustomTracks();
+    showNotification(`${customTracks.length} file musik berhasil ditambahkan!`, 'success');
+}
+
+function renderCustomTracks() {
+    const customTracksList = document.getElementById('customTracksList');
+    if (!customTracksList) return;
+    
+    customTracksList.innerHTML = '';
+    
+    musicState.customTracks.forEach((track, index) => {
+        const trackItem = document.createElement('div');
+        trackItem.className = 'custom-track-item';
+        trackItem.innerHTML = `
+            <div class="track-item-info">
+                <div class="track-item-name">${track.name}</div>
+            </div>
+            <div class="track-item-actions">
+                <button class="track-action-btn" onclick="playCustomTrack(${index})">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="track-action-btn" onclick="deleteCustomTrack(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        customTracksList.appendChild(trackItem);
+    });
+}
+
+function playCustomTrack(index) {
+    const track = musicState.customTracks[index];
+    if (!track) return;
+    
+    // Stop current audio
+    if (musicState.currentAudio) {
+        musicState.currentAudio.pause();
+    }
+    
+    const audio = new Audio(track.url);
+    audio.volume = musicState.volume / 100;
+    
+    audio.addEventListener('ended', () => {
+        musicState.isPlaying = false;
+        updatePlayButton();
+    });
+    
+    audio.play().catch(err => {
+        console.log('Audio play failed:', err);
+        showNotification('Tidak dapat memutar file ini.', 'warning');
+    });
+    
+    musicState.currentAudio = audio;
+    musicState.isPlaying = true;
+    musicState.currentPlaylist = { name: 'Custom', type: 'Custom', tracks: [track] };
+    musicState.currentTrackIndex = 0;
+    
+    updatePlayButton();
+    updateCurrentTrackDisplay();
+}
+
+function deleteCustomTrack(index) {
+    musicState.customTracks.splice(index, 1);
+    localStorage.setItem('customTracks', JSON.stringify(musicState.customTracks.map(t => ({ name: t.name, url: t.url }))));
+    renderCustomTracks();
+    showNotification('File musik dihapus!', 'success');
+}
+
+function loadCustomTracks() {
+    renderCustomTracks();
+}
+
+// Ambient Sounds
+function initAmbientSounds() {
+    const soundCards = document.querySelectorAll('.ambient-sound-card');
+    
+    soundCards.forEach(card => {
+        const soundId = card.getAttribute('data-sound');
+        const toggleBtn = card.querySelector('.sound-toggle-btn');
+        const volumeSlider = card.querySelector('.sound-volume');
+        
+        // Toggle sound
+        toggleBtn.addEventListener('click', () => {
+            toggleAmbientSound(soundId, card, toggleBtn);
+        });
+        
+        // Volume control
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            if (ambientSounds[soundId]) {
+                ambientSounds[soundId].volume = volume;
+            }
+        });
+    });
+}
+
+function toggleAmbientSound(soundId, card, toggleBtn) {
+    if (ambientSounds[soundId]) {
+        // Stop sound
+        ambientSounds[soundId].pause();
+        ambientSounds[soundId] = null;
+        card.classList.remove('playing');
+        toggleBtn.classList.remove('playing');
+        toggleBtn.querySelector('i').className = 'fas fa-play';
+    } else {
+        // Generate or load ambient sound
+        const audio = generateAmbientSound(soundId);
+        audio.loop = true;
+        audio.volume = card.querySelector('.sound-volume').value / 100;
+        audio.play().catch(err => {
+            console.log('Ambient sound play failed:', err);
+        });
+        
+        ambientSounds[soundId] = audio;
+        card.classList.add('playing');
+        toggleBtn.classList.add('playing');
+        toggleBtn.querySelector('i').className = 'fas fa-pause';
+    }
+}
+
+function generateAmbientSound(type) {
+    // For demo, we'll create simple tones
+    // In production, you'd use actual audio files
+    const audio = new Audio();
+    
+    // Using data URLs or external sources for ambient sounds
+    // Note: These are placeholders - replace with actual ambient sound URLs
+    const soundUrls = {
+        rain: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        cafe: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        forest: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+        ocean: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        fire: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        city: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+    };
+    
+    audio.src = soundUrls[type] || soundUrls.rain;
+    return audio;
+}
+
+// White Noise Generator
+function initWhiteNoise() {
+    const noiseToggleBtn = document.getElementById('noiseToggleBtn');
+    const noiseTypeSelect = document.getElementById('noiseType');
+    const noiseVolumeSlider = document.getElementById('noiseVolume');
+    const noiseVolumeValue = document.getElementById('noiseVolumeValue');
+    
+    // Initialize AudioContext
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+        console.log('Web Audio API not supported');
+    }
+    
+    // Toggle white noise
+    if (noiseToggleBtn) {
+        noiseToggleBtn.addEventListener('click', () => {
+            toggleWhiteNoise();
+        });
+    }
+    
+    // Change noise type
+    if (noiseTypeSelect) {
+        noiseTypeSelect.addEventListener('change', () => {
+            if (whiteNoise) {
+                stopWhiteNoise();
+                setTimeout(() => toggleWhiteNoise(), 100);
+            }
+        });
+    }
+    
+    // Volume control
+    if (noiseVolumeSlider) {
+        noiseVolumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value;
+            if (noiseVolumeValue) noiseVolumeValue.textContent = `${volume}%`;
+            if (whiteNoiseNode) {
+                whiteNoiseNode.gain.value = volume / 100;
+            }
+        });
+    }
+}
+
+function toggleWhiteNoise() {
+    const noiseToggleBtn = document.getElementById('noiseToggleBtn');
+    
+    if (whiteNoise) {
+        stopWhiteNoise();
+    } else {
+        startWhiteNoise();
+    }
+}
+
+function startWhiteNoise() {
+    if (!audioContext) {
+        showNotification('Web Audio API tidak didukung di browser ini.', 'warning');
+        return;
+    }
+    
+    const noiseType = document.getElementById('noiseType').value;
+    const volume = document.getElementById('noiseVolume').value / 100;
+    const noiseToggleBtn = document.getElementById('noiseToggleBtn');
+    
+    // Create buffer source
+    const bufferSize = 2 * audioContext.sampleRate;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    // Generate noise based on type
+    for (let i = 0; i < bufferSize; i++) {
+        let value;
+        switch (noiseType) {
+            case 'white':
+                value = Math.random() * 2 - 1;
+                break;
+            case 'pink':
+                // Pink noise (simplified)
+                value = (Math.random() * 2 - 1) * 0.5;
+                break;
+            case 'brown':
+                // Brown noise (simplified)
+                value = (Math.random() * 2 - 1) * 0.3;
+                break;
+            default:
+                value = Math.random() * 2 - 1;
+        }
+        data[i] = value;
+    }
+    
+    // Create source and gain nodes
+    const source = audioContext.createBufferSource();
+    const gainNode = audioContext.createGain();
+    
+    source.buffer = buffer;
+    source.loop = true;
+    gainNode.gain.value = volume;
+    
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    source.start();
+    
+    whiteNoise = source;
+    whiteNoiseNode = gainNode;
+    
+    // Update UI
+    if (noiseToggleBtn) {
+        noiseToggleBtn.classList.add('playing');
+        noiseToggleBtn.querySelector('span').textContent = 'Hentikan White Noise';
+        noiseToggleBtn.querySelector('i').className = 'fas fa-stop';
+    }
+}
+
+function stopWhiteNoise() {
+    if (whiteNoise) {
+        whiteNoise.stop();
+        whiteNoise = null;
+        whiteNoiseNode = null;
+    }
+    
+    const noiseToggleBtn = document.getElementById('noiseToggleBtn');
+    if (noiseToggleBtn) {
+        noiseToggleBtn.classList.remove('playing');
+        noiseToggleBtn.querySelector('span').textContent = 'Mulai White Noise';
+        noiseToggleBtn.querySelector('i').className = 'fas fa-play';
+    }
+}
+
+// Sound Effects
+function initSoundEffects() {
+    const enableSoundEffects = document.getElementById('enableSoundEffects');
+    const testEffectBtns = document.querySelectorAll('.test-effect-btn');
+    const effectSelects = document.querySelectorAll('.effect-select');
+    
+    // Load saved config
+    if (enableSoundEffects) {
+        enableSoundEffects.checked = JSON.parse(localStorage.getItem('soundEffectsEnabled') || 'true');
+        soundEnabled = enableSoundEffects.checked;
+        
+        enableSoundEffects.addEventListener('change', (e) => {
+            soundEnabled = e.target.checked;
+            localStorage.setItem('soundEffectsEnabled', soundEnabled);
+        });
+    }
+    
+    // Update effect selects
+    effectSelects.forEach(select => {
+        const effectType = select.getAttribute('data-effect');
+        select.value = soundEffectsConfig[effectType] || select.options[0].value;
+        
+        select.addEventListener('change', (e) => {
+            soundEffectsConfig[effectType] = e.target.value;
+            localStorage.setItem('soundEffectsConfig', JSON.stringify(soundEffectsConfig));
+        });
+    });
+    
+    // Test effects
+    testEffectBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const effectType = btn.getAttribute('data-effect');
+            playSoundEffect(effectType);
+        });
+    });
+}
+
+// Enhanced playSound function
+function playSound(type) {
+    if (!soundEnabled) return;
+    
+    playSoundEffect(type);
+}
+
+function playSoundEffect(type) {
+    if (!soundEnabled) return;
+    
+    const effectName = soundEffectsConfig[type] || 'success1';
+    
+    // Generate sound effect using Web Audio API
+    if (!audioContext) {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            // Fallback to simple beep
+            createSimpleBeep(effectName);
+            return;
+        }
+    }
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Configure based on effect type
+    let frequency, duration, type_wave;
+    
+    switch (effectName) {
+        case 'success1':
+        case 'success2':
+            frequency = type === 'achievement' ? 800 : 600;
+            duration = 0.2;
+            type_wave = 'sine';
+            break;
+        case 'bell':
+            frequency = 800;
+            duration = 0.5;
+            type_wave = 'sine';
+            break;
+        case 'ding':
+            frequency = 600;
+            duration = 0.15;
+            type_wave = 'sine';
+            break;
+        case 'pop':
+            frequency = 400;
+            duration = 0.1;
+            type_wave = 'sine';
+            break;
+        case 'click':
+            frequency = 1000;
+            duration = 0.05;
+            type_wave = 'square';
+            break;
+        case 'whoosh':
+            frequency = 300;
+            duration = 0.3;
+            type_wave = 'sawtooth';
+            break;
+        case 'trash':
+            frequency = 200;
+            duration = 0.2;
+            type_wave = 'sawtooth';
+            break;
+        case 'swoosh':
+            frequency = 400;
+            duration = 0.25;
+            type_wave = 'sine';
+            break;
+        case 'celebration':
+        case 'fanfare':
+        case 'victory':
+            // Play multiple tones
+            playCelebrationSound();
+            return;
+        case 'tick':
+            frequency = 1000;
+            duration = 0.05;
+            type_wave = 'square';
+            break;
+        case 'tock':
+            frequency = 800;
+            duration = 0.05;
+            type_wave = 'square';
+            break;
+        case 'alarm':
+            frequency = 800;
+            duration = 0.3;
+            type_wave = 'sine';
+            break;
+        default:
+            frequency = 600;
+            duration = 0.2;
+            type_wave = 'sine';
+    }
+    
+    oscillator.type = type_wave;
+    oscillator.frequency.value = frequency;
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration);
+}
+
+function playCelebrationSound() {
+    // Play a sequence of tones for celebration
+    const tones = [523.25, 659.25, 783.99, 1046.50]; // C, E, G, C
+    
+    tones.forEach((freq, index) => {
+        setTimeout(() => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = freq;
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }, index * 100);
+    });
+}
+
+function createSimpleBeep(type) {
+    // Fallback simple beep
+    const audio = new Audio();
+    audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZijcIGWi77+WfTQ='; // Simple beep
+    audio.volume = 0.3;
+    audio.play().catch(() => {});
+}
+
+function updateMusicBadge() {
+    const musicBadge = document.getElementById('musicBadge');
+    if (musicBadge && musicState.isPlaying) {
+        musicBadge.classList.add('active');
+        musicBadge.textContent = '♪';
+    } else if (musicBadge) {
+        musicBadge.classList.remove('active');
+    }
+}
+
+// Update music badge periodically
+setInterval(updateMusicBadge, 1000);
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initMusicAndSound, 500);
+});
+
+// ============================================
+// ENHANCED INTERACTIVE DROPDOWNS
+// ============================================
+
+// Wrap selects with interactive wrapper
+function wrapSelects() {
+    const allSelects = document.querySelectorAll('select:not(.wrapped)');
+    
+    allSelects.forEach(select => {
+        // Mark as wrapped
+        select.classList.add('wrapped');
+        
+        // Create wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'select-wrapper-interactive';
+        
+        // Get parent display type to maintain layout
+        const parentStyle = window.getComputedStyle(select.parentElement);
+        const parentDisplay = parentStyle.display;
+        
+        // Set wrapper style based on parent
+        if (parentDisplay === 'flex') {
+            wrapper.style.cssText = 'position: relative; flex: 1; width: 100%;';
+        } else {
+            wrapper.style.cssText = 'position: relative; display: inline-block; width: 100%;';
+        }
+        
+        // Create subtle glow effect element
+        const glow = document.createElement('div');
+        glow.className = 'select-glow';
+        glow.style.cssText = `
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(5, 255, 161, 0.15), rgba(1, 205, 254, 0.1));
+            border-radius: inherit;
+            opacity: 0;
+            z-index: -1;
+            filter: blur(8px);
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        `;
+        
+        // Wrap the select
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+        wrapper.appendChild(glow);
+        
+        // Elegant hover effect - subtle
+        wrapper.addEventListener('mouseenter', function() {
+            glow.style.opacity = '0.15';
+        });
+        
+        wrapper.addEventListener('mouseleave', function() {
+            glow.style.opacity = '0';
+        });
+        
+        // Elegant focus effect - refined
+        select.addEventListener('focus', function() {
+            glow.style.opacity = '0.25';
+            if (soundEnabled) {
+                setTimeout(() => playSoundEffect('click'), 50);
+            }
+        });
+        
+        select.addEventListener('blur', function() {
+            glow.style.opacity = '0';
+        });
+    });
+}
+
+// Add interactive effects to all dropdowns
+function initInteractiveDropdowns() {
+    // First wrap all selects
+    wrapSelects();
+    
+    const allSelects = document.querySelectorAll('select');
+    
+    allSelects.forEach(select => {
+        // Elegant change feedback - subtle
+        select.addEventListener('change', function() {
+            // Play subtle sound effect
+            if (soundEnabled) {
+                playSoundEffect('click');
+            }
+            
+            // Subtle feedback
+            const wrapper = this.closest('.select-wrapper-interactive');
+            if (wrapper) {
+                const glow = wrapper.querySelector('.select-glow');
+                if (glow) {
+                    glow.style.opacity = '0.3';
+                    setTimeout(() => {
+                        glow.style.opacity = '0';
+                    }, 300);
+                }
+            }
+        });
+        
+        // Add active state animation
+        select.addEventListener('mousedown', function() {
+            this.style.transform = 'scale(0.97)';
+        });
+        
+        select.addEventListener('mouseup', function() {
+            if (this === document.activeElement) {
+                this.style.transform = 'scale(1.03) translateY(-2px)';
+            } else {
+                this.style.transform = '';
+            }
+        });
+    });
+}
+
+// Elegant dropdown animations
+function addDropdownAnimations() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .select-wrapper-interactive {
+            width: 100%;
+        }
+        
+        .select-wrapper-interactive select {
+            width: 100%;
+        }
+        
+        .select-glow {
+            border-radius: inherit;
+        }
+        
+        select {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Initialize dropdown enhancements when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    addDropdownAnimations();
+    setTimeout(initInteractiveDropdowns, 300);
+});
