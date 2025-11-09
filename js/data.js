@@ -18,19 +18,8 @@ export const productivityTips = [
 
 // Quotes Motivasi
 export const motivationalQuotes = [
-    "Haiii sayangkuu Shanaaa~ jangan terlalu keras ya hari ini, inget istirahat biar tetep imut! 💖",
-    "Satu langkah kecil aja udah hebat banget, apalagi kamu yang super rajin~ 😘✨",
-    "Shana sayang, senyum dikit dong~ biar dunia ikut ceriaaa 😊💕",
-    "Kamu itu lebih kuat dari yang kamu kira, dan Ell selalu bangga sama kamu 💪💗",
-    "Kalau hari ini berat, peluk virtual dari Ell siap nemenin~ 🤗🌈",
-    "Pelan-pelan juga gak apa-apa, yang penting kamu terus maju, sayang 🐢💖",
-    "Zona nyaman boleh ditinggal bentar yaa, kamu bisa jadi luar biasa! 🐱🔥",
-    "Kalau capek, rebahan bentar yaa. Ell temenin pake teh anget 🫖🍵",
-    "Kamu udah sejauh ini, dan Ell liat semua perjuanganmu~ hebat banget kamu! 🚀❤️",
-    "Waktu kamu berharga banget, jadi pakai sebaik mungkin ya, cinta 🕰️✨",
-    "Kerja kerasmu itu ngasih inspirasi buat Ell lohh~ 🌱🌟",
-    "Mimpi besar itu dimulai dari hati kecil yang penuh cinta, kayak kamu 🌻💘",
-    "Gak usah nunggu besok, yuk semangat bareng dari sekarang, Shana sayangg! 🚀💕"
+    "HAHAHA KOCAK ITU AK UDAH BALES TAU COBA LIAT POJOK KIRI BAWAH ",
+    
 ];
 
 // Quotes untuk sidebar
