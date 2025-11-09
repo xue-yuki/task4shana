@@ -723,7 +723,7 @@
 
         <div class="button-container" id="buttonContainer">
             <button class="btn btn-yes" id="btnYes">
-                <span class="btn-icon">💞</span>
+                <span class="btn-icon">>_<</span>
                 <span class="btn-text">Aku Mau Lanjutin Nanti</span>
             </button>
             <button class="btn btn-no" id="btnNo">
@@ -906,6 +906,9 @@
         });
 
         btnNo.addEventListener('click', () => {
+            // Change music to bad ending
+            changeToBadEnding();
+            
             // Hide button container
             buttonContainer.style.display = 'none';
             
@@ -961,6 +964,26 @@
                     audioControl.classList.add('playing');
                 }).catch(() => {
                     console.log('Gagal play happy ending music');
+                });
+            }
+        }
+
+        // Function to change music to bad ending
+        function changeToBadEnding() {
+            const wasPlaying = isPlaying;
+            
+            bgMusic.pause();
+            bgMusic.src = 'sounds/badending.mp3';
+            bgMusic.load();
+            
+            if (wasPlaying) {
+                bgMusic.currentTime = 0;
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    audioIcon.textContent = '🔊';
+                    audioControl.classList.add('playing');
+                }).catch(() => {
+                    console.log('Gagal play bad ending music');
                 });
             }
         }
