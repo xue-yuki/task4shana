@@ -258,3 +258,64 @@ export function initThemeSelection() {
     });
 }
 
+// Show notification about ReplyFromEll.html
+export function showReplyFromEllNotification() {
+    // Check if user has seen notification today
+    const today = new Date().toDateString();
+    const lastShown = localStorage.getItem('replyFromEllNotificationDate');
+    
+    // Show notification if not shown today
+    if (lastShown !== today) {
+        // Check if ReplyFromEll.html exists
+        fetch('ReplyFromEll.html', { method: 'HEAD' })
+            .then(() => {
+                // File exists, show notification
+                setTimeout(() => {
+                    const notification = document.getElementById('notification');
+                    const notificationText = document.getElementById('notificationText');
+                    const notificationIcon = document.querySelector('.notification-icon');
+                    
+                    if (notification && notificationText && notificationIcon) {
+                        // Update icon to heart
+                        notificationIcon.innerHTML = '<i class="fas fa-heart"></i>';
+                        
+                        // Create message with link
+                        notificationText.innerHTML = '💫 Ada pesan spesial dari Ell untuk kamu! <a href="ReplyFromEll.html" style="color: #ffd700; text-decoration: underline; font-weight: bold; cursor: pointer;">Klik di sini</a>';
+                        
+                        // Add special styling for this notification
+                        notification.className = 'notification';
+                        notification.classList.add('special');
+                        notification.classList.add('show');
+                        
+                        // Prevent notification from closing when clicking the link
+                        const link = notificationText.querySelector('a');
+                        if (link) {
+                            link.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                // Save that notification was shown today when link is clicked
+                                localStorage.setItem('replyFromEllNotificationDate', today);
+                            });
+                        }
+                        
+                        // Play sound if enabled
+                        if (soundEnabled) {
+                            playSoundEffect('notification');
+                        }
+                        
+                        // Save that notification was shown today
+                        localStorage.setItem('replyFromEllNotificationDate', today);
+                        
+                        // Auto-hide after 10 seconds (longer for important notification)
+                        setTimeout(() => {
+                            notification.classList.remove('show');
+                        }, 10000);
+                    }
+                }, 3500); // Show after loading screen (3.5 seconds)
+            })
+            .catch(() => {
+                // File doesn't exist, don't show notification
+                console.log('ReplyFromEll.html not found');
+            });
+    }
+}
+

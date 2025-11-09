@@ -42,7 +42,8 @@ import {
     updateDailyMotivation,
     updateProductivityTip,
     updateWeatherWidget,
-    initThemeSelection
+    initThemeSelection,
+    showReplyFromEllNotification
 } from './js/ui.js';
 import {
     initCore,
@@ -121,6 +122,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         initMessageToEllForm();
     }, 500);
+    
+    // Show notification about ReplyFromEll.html
+    setTimeout(() => {
+        showReplyFromEllNotification();
+    }, 4000);
     
     // Update achievements when tasks change
     const originalAddTask = addTask;

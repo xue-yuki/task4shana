@@ -18,7 +18,7 @@ export const productivityTips = [
 
 // Quotes Motivasi
 export const motivationalQuotes = [
-    "HAHAHA KOCAK ITU AK UDAH BALES TAU COBA LIAT POJOK KIRI BAWAH ",
+    "HAHAHA KOCAK ITU AK UDAH BALES TAU, COBA LIAT POJOK KIRI BAWAH, AKU GA BAKAL LUPAIN SEMUA KENANGAN KITA KOK iTU AK UDH BUAT DARI JAM 4 TAU ",
     
 ];
 
