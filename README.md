@@ -13,7 +13,7 @@ Mengembangkan aplikasi to-do list yang interaktif, kaya fitur, dan personal untu
 - ✅ Galeri Foto
 - ✅ Sistem Pencapaian
 - ✅ Jadwal Mendatang
-- ✅ Catatan Cepat
+- ✅ Catatan C  epat
 - ✅ Fokus Hari Ini
 - ✅ Quote Inspirasi
 - ✅ AI Task Input (Quick Add)

@@ -467,6 +467,7 @@ button:active {
     background: linear-gradient(45deg, var(--warning), var(--orange));
 }
 
+
 .complete-btn {
     background: linear-gradient(45deg, var(--success), var(--accent));
 }
@@ -1195,6 +1196,44 @@ button:active {
     box-shadow: 0 0 15px var(--primary);
 }
 
+.special-link {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: white;
+    font-size: 20px;
+    z-index: 100;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    animation: heartbeat 2s infinite;
+}
+
+.special-link:hover {
+    transform: scale(1.2);
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    10%, 30% {
+        transform: scale(1.1);
+    }
+    20%, 40% {
+        transform: scale(1.05);
+    }
+}
+
 .tip-container {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
@@ -1399,7 +1438,6 @@ button:active {
     
     .task-actions {
         width: 100%;
-        flex-direction: row;
     }
 }
 

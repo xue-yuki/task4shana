@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan dari Ell 💫</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Audio control button */
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 20px;
+        }
+
+        .audio-control:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .audio-control.playing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(240, 147, 251, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 15px rgba(240, 147, 251, 0);
+            }
+        }
+
+        /* Back button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button:active {
+            transform: translateX(-3px) scale(0.95);
+        }
+
+        .back-button i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover i {
+            transform: translateX(-3px);
+        }
+    
+    </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+            padding: 20px;
+        }
+
+        /* Bintang berkelap-kelip */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* Foto melayang */
+        .floating-photos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .floating-photo {
+            position: absolute;
+            font-size: 50px;
+            animation: float-up 10s infinite;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .floating-photo.image-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 
+                        0 0 30px rgba(240, 147, 251, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            transition: all 1s ease-in-out;
+        }
+
+        .floating-photo.image-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+                filter: blur(5px);
+            }
+            5% {
+                opacity: 0;
+                filter: blur(5px);
+            }
+            15% {
+                opacity: 1;
+                transform: translateY(90vh) rotate(10deg) scale(1);
+                filter: blur(0px);
+            }
+            85% {
+                opacity: 1;
+                transform: translateY(10vh) rotate(350deg) scale(1);
+                filter: blur(0px);
+            }
+            95% {
+                opacity: 0.3;
+                filter: blur(3px);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(0.5);
+                opacity: 0;
+                filter: blur(5px);
+            }
+        }
+
+        /* Container utama */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .message-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .message-line {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            text-align: left;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Delay untuk setiap baris */
+        .message-line:nth-child(1) { animation-delay: 0.5s; }
+        .message-line:nth-child(2) { animation-delay: 1s; }
+        .message-line:nth-child(3) { animation-delay: 1.5s; }
+        .message-line:nth-child(4) { animation-delay: 2s; }
+        .message-line:nth-child(5) { animation-delay: 2.5s; }
+        .message-line:nth-child(6) { animation-delay: 3s; }
+        .message-line:nth-child(7) { animation-delay: 3.5s; }
+        .message-line:nth-child(8) { animation-delay: 4s; }
+        .message-line:nth-child(9) { animation-delay: 4.5s; }
+        .message-line:nth-child(10) { animation-delay: 5s; }
+        .message-line:nth-child(11) { animation-delay: 5.5s; }
+        .message-line:nth-child(12) { animation-delay: 6s; }
+        .message-line:nth-child(13) { animation-delay: 6.5s; }
+        .message-line:nth-child(14) { animation-delay: 7s; }
+        .message-line:nth-child(15) { animation-delay: 7.5s; }
+        .message-line:nth-child(16) { animation-delay: 8s; }
+        .message-line:nth-child(17) { animation-delay: 8.5s; }
+        .message-line:nth-child(18) { animation-delay: 9s; }
+        .message-line:nth-child(19) { animation-delay: 9.5s; }
+        .message-line:nth-child(20) { animation-delay: 10s; }
+        .message-line:nth-child(21) { animation-delay: 10.5s; }
+
+        /* Tombol */
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            animation-delay: 11s;
+        }
+
+        .btn {
+            padding: 18px 35px;
+            font-size: 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 250px;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-icon {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+
+        .btn:hover .btn-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .btn-text {
+            z-index: 1;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.5);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-no:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.5);
+        }
+
+        /* Form */
+        .form-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .form-container.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .form-title {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #f093fb;
+            font-weight: 600;
+        }
+
+        .form-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            resize: vertical;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #f093fb;
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .char-count span {
+            font-weight: 600;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-submit:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.6);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit-text, .btn-submit-loader {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-submit-loader {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pesan sukses */
+        .success-message {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .success-message.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .success-text {
+            font-size: 24px;
+            color: #4fffb0;
+            font-weight: 600;
+        }
+
+        /* Pesan sedih */
+        .sad-message {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .sad-message.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .sad-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .sad-text {
+            font-size: 20px;
+            color: #ff6b9d;
+            line-height: 1.8;
+        }
+
+        .sad-text p {
+            margin: 10px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .back-button {
+                top: 15px;
+                left: 15px;
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .back-button span {
+                display: none;
+            }
+
+            .back-button i {
+                font-size: 16px;
+            }
+
+            .audio-control {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .message-box {
+                padding: 25px;
+            }
+
+            .message-line {
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .floating-photo.image-photo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .floating-photo {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 8px 12px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                justify-content: center;
+            }
+
+            .back-button span {
+                display: none;
+            }
+
+            .audio-control {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .container {
+                padding: 20px 10px;
+            }
+
+            .message-line {
+                font-size: 15px;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .floating-photo.image-photo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .floating-photo {
+                font-size: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Background -->
+    <audio id="bgMusic" loop>
+        <source src="sounds/backsound.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Back Button -->
+    <a href="index.html" class="back-button" title="Kembali ke Task4Shana">
+        <i class="fas fa-arrow-left"></i>
+        <span>Kembali ke Task4Shana</span>
+    </a>
+
+    <!-- Audio Control Button -->
+    <div class="audio-control" id="audioControl" title="Play/Pause Music">
+        <span id="audioIcon">🔇</span>
+    </div>
+
+    <!-- Bintang berkelap-kelip -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Foto melayang -->
+    <div class="floating-photos" id="floatingPhotos"></div>
+
+    <div class="container">
+        <div class="message-box">
+            <div class="message-line">Haiii KAKKKK AK EXCITED BANGET JAWAB PESAN KAMU ><</div>
+            <div class="message-line">oi kak, emng ak pernah bilang ak mw move on ya dari kamuu?</div>
+            <div class="message-line">ak cuma lagi berproses dulu, buat jadi versi terbaik akuu.</div>
+            <div class="message-line">ak ngecut off bukan karena benci, tapi biar ga kehilangan semangat buat tumbuh.</div>
+            <div class="message-line">tapi kalo kamu mikirnya gitu, ya gapapa sii…</div>
+            <div class="message-line">so nanti klo kmu udh masuk ITB, terus ada yang neriakin kmuu…</div>
+            <div class="message-line">bisa jadi itu aku yaaa, tapi ga cuma di ITB doang dimana pun ituu</div>
+            <div class="message-line">terus ya kak jangan mikir aku bakalan punya cewe baru oiii</div>
+            <div class="message-line">DIRI AK CUMA MAUNYA KAMU WOIII!! ONLY YOUU!! </div>
+            <div class="message-line">maaf, jujur aku juga nyesek woii Waktu ak ngecut off kmu, </div>
+            <div class="message-line">tapi ak sadar kalo sekarang ak paksa lanjutin</div>
+            <div class="message-line">hubungan sama kmu, yang ada kita bakalan sakit terus, walaupun cuma teman</div>
+            <div class="message-line">JADIII TUNGGU AKUU DI VERSI TERBAIK AK YAA, YAAAA AK BAKALAN DATENG KOK</div>
+            <div class="message-line">"aku minta maaf ya gabisa menuhin janji2 dan wacana kita yang udh kita rencanain"</div>
+            <div class="message-line">iya gapapa kok kakk kalo kmu gabisa, Tapi nanti aku yang bakalan Menuhin janji dan wacana kita</div>
+            <div class="message-line">kaloo kita masih di pertemukan lagi, tapi kalo nanti ak Waktu ketemu kmu tapi kamu sudah sama</div>
+            <div class="message-line">yang lain apa boleh buattt... *Tertawa Tapi terluka*</div>
+            <div class="message-line">jadi ya untuk saat ini kita fokus dulu ke diri kita masing masing, saling memperbaiki diri,</div>
+            <div class="message-line">dan kalo kamu emang udah ga mau ngelanjutin hubungan ini lagi sama aku, gapapa kok… aku bakal tetep doain yang terbaik buat kamu. tapi kalo nanti kamu masih mau, aku juga bakal tetep di sini, nunggu waktu yang pas</div>
+            <div class="message-line">OH IYA KAK NANTI AKU BAKALAN NAMBAHIN FITUR KENANGAN BWT KM MASUKIN GOOGLE DRIVE </div>
+            <div class="message-line"><strong>MAAF YA KAK KALO AK SAMPE SEGININYA… KARENA AKU CUMA MAU TAUU KALO AK SERIUS SAMA KAMU</strong></div>
+        </div>
+
+        <div class="button-container" id="buttonContainer">
+            <button class="btn btn-yes" id="btnYes">
+                <span class="btn-icon">💞</span>
+                <span class="btn-text">Aku Mau Lanjutin Nanti</span>
+            </button>
+            <button class="btn btn-no" id="btnNo">
+                <span class="btn-icon">😔</span>
+                <span class="btn-text">Kayaknya Aku Gamau</span>
+            </button>
+        </div>
+
+        <div class="form-container" id="formContainer">
+            <div class="form-header">
+                <div class="form-icon">💕</div>
+                <div class="form-title">Tulis alasannya dulu ya…</div>
+                <div class="form-subtitle">Kenapa kamu mau lanjutin nanti?</div>
+            </div>
+            <textarea id="reasonText" placeholder="Ketik alasanmu di sini dengan jujur ya... 💭" required></textarea>
+            <div class="char-count">
+                <span id="charCount">0</span> / 500 karakter
+            </div>
+            <button class="btn-submit" id="btnSubmit">
+                <span class="btn-submit-text">Kirim ke Ell ✨</span>
+                <span class="btn-submit-loader" style="display: none;">⏳</span>
+            </button>
+        </div>
+
+        <div class="form-container" id="formContainerNo">
+            <div class="form-header">
+                <div class="form-icon">💔</div>
+                <div class="form-title">Tulis alasannya dulu ya…</div>
+                <div class="form-subtitle">Kenapa kamu gamau lanjutin?</div>
+            </div>
+            <textarea id="reasonTextNo" placeholder="Ketik alasanmu di sini dengan jujur ya... 💭" required></textarea>
+            <div class="char-count">
+                <span id="charCountNo">0</span> / 500 karakter
+            </div>
+            <button class="btn-submit" id="btnSubmitNo">
+                <span class="btn-submit-text">Kirim ke Ell ✨</span>
+                <span class="btn-submit-loader" style="display: none;">⏳</span>
+            </button>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">💫</div>
+            <div class="success-text">Pesanmu udah terbang ke Ell</div>
+            <div class="success-text">TUNGGU AKUUU AK YA KAK >< </div>
+        </div>
+
+        <div class="sad-message" id="sadMessage">
+            <div class="sad-icon">😔</div>
+            <div class="sad-text">
+                <p>Oh... aku paham kok</p>
+                <p>Makasih udah jujur sama aku...</p>
+                <p>Aku bakalan berusaha buat move on dari kamu </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        const photosList = [
+            'images/photo1.png',
+            'images/photo2.jpg',
+            'images/photo3.png',
+            'images/photo4.png',
+            'images/photo5.jpg',
+            'images/photo6.png',
+            'images/photo7.jpg',
+            'images/photo8.png',
+            'images/photo9.jpg',
+            'images/photo10.jpg',
+            'images/photo12.jpg',
+            'images/photo13.jpg',
+            'images/photo14.jpg',
+            'images/photo15.png',
+            'images/photo16.jpg',
+            'images/photo17.jpg',
+            'images/photo18.png',
+        ];
+
+        // ===== AUDIO CONTROL =====
+        const bgMusic = document.getElementById('bgMusic');
+        const audioControl = document.getElementById('audioControl');
+        const audioIcon = document.getElementById('audioIcon');
+        let isPlaying = false;
+
+        // Auto play music saat halaman dimuat
+        window.addEventListener('load', () => {
+            // Coba autoplay
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                audioIcon.textContent = '🔊';
+                audioControl.classList.add('playing');
+            }).catch(() => {
+                // Jika autoplay diblokir browser, user harus klik
+                console.log('Autoplay diblokir. Klik tombol untuk play musik.');
+            });
+        });
+
+        // Toggle play/pause
+        audioControl.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                audioIcon.textContent = '🔇';
+                audioControl.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                bgMusic.play();
+                audioIcon.textContent = '🔊';
+                audioControl.classList.add('playing');
+                isPlaying = true;
+            }
+        });
+
+        // Generate bintang
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Generate foto melayang
+        function generateFloatingPhotos() {
+            const photosContainer = document.getElementById('floatingPhotos');
+            const emojis = ['💕', '💖', '💗', '💝', '💞', '💓', '❤️', '🌟', '✨', '⭐'];
+            
+            function createPhoto() {
+                const photo = document.createElement('div');
+                const isImage = Math.random() > 0.5; // 50% kemungkinan foto asli, 50% emoji
+                
+                if (isImage && photosList.length > 0) {
+                    // Buat foto asli
+                    photo.className = 'floating-photo image-photo';
+                    const img = document.createElement('img');
+                    img.src = photosList[Math.floor(Math.random() * photosList.length)];
+                    img.alt = 'Foto kenangan';
+                    photo.appendChild(img);
+                } else {
+                    // Buat emoji
+                    photo.className = 'floating-photo';
+                    photo.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                }
+                
+                photo.style.left = Math.random() * 100 + '%';
+                photo.style.animationDuration = (10 + Math.random() * 5) + 's';
+                photo.style.animationDelay = Math.random() * 3 + 's';
+                photosContainer.appendChild(photo);
+
+                // Hapus setelah animasi selesai
+                const duration = parseFloat(photo.style.animationDuration) * 1000;
+                setTimeout(() => {
+                    photo.remove();
+                }, duration + 1000);
+            }
+
+            setInterval(createPhoto, 2000);
+        }
+
+        // Event listeners untuk tombol
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        const formContainer = document.getElementById('formContainer');
+        const formContainerNo = document.getElementById('formContainerNo');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const sadMessage = document.getElementById('sadMessage');
+
+        btnYes.addEventListener('click', () => {
+            // Hide button container
+            buttonContainer.style.display = 'none';
+            
+            // Show form with animation
+            formContainer.style.display = 'block';
+            setTimeout(() => {
+                formContainer.classList.add('show');
+            }, 10);
+        });
+
+        btnNo.addEventListener('click', () => {
+            // Hide button container
+            buttonContainer.style.display = 'none';
+            
+            // Show form for "gamau" instead of sad message
+            formContainerNo.style.display = 'block';
+            setTimeout(() => {
+                formContainerNo.classList.add('show');
+            }, 10);
+        });
+
+        // Character counter for form "Mau Lanjutin"
+        const reasonText = document.getElementById('reasonText');
+        const charCount = document.getElementById('charCount');
+        
+        reasonText.addEventListener('input', () => {
+            const length = reasonText.value.length;
+            charCount.textContent = length;
+            if (length > 500) {
+                reasonText.value = reasonText.value.substring(0, 500);
+                charCount.textContent = 500;
+            }
+            charCount.style.color = length > 450 ? '#ff6b9d' : 'rgba(255, 255, 255, 0.6)';
+        });
+
+        // Character counter for form "Gamau"
+        const reasonTextNo = document.getElementById('reasonTextNo');
+        const charCountNo = document.getElementById('charCountNo');
+        
+        reasonTextNo.addEventListener('input', () => {
+            const length = reasonTextNo.value.length;
+            charCountNo.textContent = length;
+            if (length > 500) {
+                reasonTextNo.value = reasonTextNo.value.substring(0, 500);
+                charCountNo.textContent = 500;
+            }
+            charCountNo.style.color = length > 450 ? '#ff6b9d' : 'rgba(255, 255, 255, 0.6)';
+        });
+
+        // Function to change music to happy ending
+        function changeToHappyEnding() {
+            const currentTime = bgMusic.currentTime;
+            const wasPlaying = isPlaying;
+            
+            bgMusic.pause();
+            bgMusic.src = 'sounds/happyending.mp3';
+            bgMusic.load();
+            
+            if (wasPlaying) {
+                bgMusic.currentTime = 0;
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    audioIcon.textContent = '🔊';
+                    audioControl.classList.add('playing');
+                }).catch(() => {
+                    console.log('Gagal play happy ending music');
+                });
+            }
+        }
+
+        // Submit form "Mau Lanjutin"
+        const btnSubmit = document.getElementById('btnSubmit');
+        const successMessage = document.getElementById('successMessage');
+        const btnSubmitText = btnSubmit.querySelector('.btn-submit-text');
+        const btnSubmitLoader = btnSubmit.querySelector('.btn-submit-loader');
+
+        btnSubmit.addEventListener('click', async () => {
+            const reason = reasonText.value.trim();
+            
+            if (!reason) {
+                alert('Tulis alasannya dulu ya... 🥺');
+                reasonText.focus();
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmitText.style.display = 'none';
+            btnSubmitLoader.style.display = 'inline-block';
+
+            try {
+                const emailMessage = `🎉 PILIHAN: MAU LANJUTIN NANTI 💞\n\nAlasan:\n${reason}`;
+                
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        access_key: 'de0c31a4-be09-4927-8dc9-a5520ac3e3ae',
+                        subject: '💞 Shana Mau Lanjutin Nanti',
+                        message: emailMessage
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Change music to happy ending
+                    changeToHappyEnding();
+                    
+                    // Hide form
+                    formContainer.classList.remove('show');
+                    setTimeout(() => {
+                        formContainer.style.display = 'none';
+                        // Show success message
+                        successMessage.style.display = 'block';
+                        setTimeout(() => {
+                            successMessage.classList.add('show');
+                        }, 10);
+                    }, 500);
+                } else {
+                    alert('Gagal mengirim pesan. Coba lagi ya 🥺');
+                    btnSubmit.disabled = false;
+                    btnSubmitText.style.display = 'inline';
+                    btnSubmitLoader.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Coba lagi ya 🥺');
+                btnSubmit.disabled = false;
+                btnSubmitText.style.display = 'inline';
+                btnSubmitLoader.style.display = 'none';
+            }
+        });
+
+        // Submit form "Gamau"
+        const btnSubmitNo = document.getElementById('btnSubmitNo');
+        const btnSubmitNoText = btnSubmitNo.querySelector('.btn-submit-text');
+        const btnSubmitNoLoader = btnSubmitNo.querySelector('.btn-submit-loader');
+
+        btnSubmitNo.addEventListener('click', async () => {
+            const reason = reasonTextNo.value.trim();
+            
+            if (!reason) {
+                alert('Tulis alasannya dulu ya... 🥺');
+                reasonTextNo.focus();
+                return;
+            }
+
+            btnSubmitNo.disabled = true;
+            btnSubmitNoText.style.display = 'none';
+            btnSubmitNoLoader.style.display = 'inline-block';
+
+            try {
+                const emailMessage = `😔 PILIHAN: GAMAU LANJUTIN\n\nAlasan:\n${reason}`;
+                
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        access_key: 'de0c31a4-be09-4927-8dc9-a5520ac3e3ae',
+                        subject: '😔 Shana Gamau Lanjutin',
+                        message: emailMessage
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Hide form
+                    formContainerNo.classList.remove('show');
+                    setTimeout(() => {
+                        formContainerNo.style.display = 'none';
+                        // Show sad message
+                        sadMessage.style.display = 'block';
+                        setTimeout(() => {
+                            sadMessage.classList.add('show');
+                        }, 10);
+                    }, 500);
+                } else {
+                    alert('Gagal mengirim pesan. Coba lagi ya 🥺');
+                    btnSubmitNo.disabled = false;
+                    btnSubmitNoText.style.display = 'inline';
+                    btnSubmitNoLoader.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Coba lagi ya 🥺');
+                btnSubmitNo.disabled = false;
+                btnSubmitNoText.style.display = 'inline';
+                btnSubmitNoLoader.style.display = 'none';
+            }
+        });
+
+        // Inisialisasi
+        generateStars();
+        generateFloatingPhotos();
+    </script>
+</body>
+</html>
+
