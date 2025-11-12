@@ -67,6 +67,7 @@ import { initPhotoGallery } from './js/gallery.js';
 import { initMusicAndSound, updateMusicBadge } from './js/music-sound.js';
 import { initInteractiveDropdowns, addDropdownAnimations } from './js/dropdowns.js';
 import { initMessageToEllForm } from './js/message-form.js';
+import { initMemoryGallery } from './js/memory-gallery.js';
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -122,6 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         initMessageToEllForm();
     }, 500);
+    
+    // Initialize memory gallery
+    setTimeout(() => {
+        initMemoryGallery();
+    }, 300);
     
     // Show notification about ReplyFromEll.html
     setTimeout(() => {

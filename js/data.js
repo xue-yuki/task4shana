@@ -18,8 +18,16 @@ export const productivityTips = [
 
 // Quotes Motivasi
 export const motivationalQuotes = [
-    "HAHAHA KOCAK ITU AK UDAH BALES TAU, COBA LIAT POJOK KIRI BAWAH, AKU GA BAKAL LUPAIN SEMUA KENANGAN KITA KOK iTU AK UDH BUAT DARI JAM 4 TAU ",
-    
+    "Haiii Kak, kamu kalo masi liat ini itu tandanya aku masi sayangg sama kmu hehe ",
+    "Hi, Kamu lagi apa?? Jangan lupa makan yaa kak",
+    "Kak ak mw jadi Maru, Biar bisa liat kamu setiap harii",
+    "aloooo Ak sampe saat ini, ak kangen sama kamu woii",
+    "HIII, ak masih tandain hama hama kmu loh xixixi",
+    "OII, ak ga sabarr bangettt bwt kita ketemu nantiii",
+    "Kak, kamu kalo tiba tiba oleng sama orang tolong kabarin aku yaa... *Semoga Ga terjadi Aminnn",
+    "Kak kamuu jangan sering begadang oi, itu tidak baik ckckckck",
+    "U-una naa unaaa, yahaaa!!",
+    "Huhuhuu ak kangen kmu tapi sekarang lagi ga bisa, kngn suara kmu woii",
 ];
 
 // Quotes untuk sidebar

@@ -71,6 +71,7 @@ export function initSidebarComponents() {
     renderQuickNote();
     renderFocusToday();
     renderQuote();
+    initCountdownTKA();
     
     // Update pencapaian berdasarkan tugas
     updateAchievements();
@@ -330,5 +331,48 @@ function renderQuote() {
             quoteAuthor.style.opacity = 1;
         }, 300);
     });
+}
+
+// ===== FUNGSI UNTUK COUNTDOWN TKA =====
+function initCountdownTKA() {
+    // Target tanggal: 5 November 2026
+    const targetDate = new Date('2026-11-05T00:00:00');
+    
+    const daysElement = document.getElementById('countdownDays');
+    const hoursElement = document.getElementById('countdownHours');
+    const minutesElement = document.getElementById('countdownMinutes');
+    const secondsElement = document.getElementById('countdownSeconds');
+    
+    if (!daysElement || !hoursElement || !minutesElement || !secondsElement) return;
+    
+    function updateCountdown() {
+        const now = new Date();
+        const timeDifference = targetDate - now;
+        
+        if (timeDifference <= 0) {
+            // Jika sudah melewati tanggal target
+            daysElement.textContent = '0';
+            hoursElement.textContent = '0';
+            minutesElement.textContent = '0';
+            secondsElement.textContent = '0';
+            return;
+        }
+        
+        // Hitung waktu tersisa
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        
+        // Update tampilan
+        daysElement.textContent = days.toString().padStart(2, '0');
+        hoursElement.textContent = hours.toString().padStart(2, '0');
+        minutesElement.textContent = minutes.toString().padStart(2, '0');
+        secondsElement.textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    // Update countdown setiap detik
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 }
 
