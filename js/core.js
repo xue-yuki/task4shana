@@ -21,7 +21,8 @@ import {
     setTimerSeconds,
     setTimerRunning,
     setCurrentMonth,
-    setCurrentYear
+    setCurrentYear,
+    setCurrentEditTaskId
 } from './config.js';
 import { showNotification, createConfetti, applyTheme, createParticles, updateDailyMotivation, updateProductivityTip, updateWeatherWidget } from './ui.js';
 import { formatDate, formatDateToString, getTodayDateString, playSoundEffect } from './utils.js';
@@ -290,7 +291,7 @@ export function addTask() {
 export function openEditModal(task) {
     if (!taskModal || !editTaskName || !editTaskCategory || !editTaskDate || !editTaskDesc) return;
     
-    currentEditTaskId = task.id;
+    setCurrentEditTaskId(task.id);
     
     editTaskName.value = task.text;
     editTaskCategory.value = task.category;
@@ -871,24 +872,32 @@ function initTaskListDelegation() {
     taskList.addEventListener('click', function(e) {
         let targetEl = e.target;
         
+        // Find the button element (could be clicked directly or through icon inside)
         while (targetEl && targetEl !== this) {
-            if (targetEl.tagName === 'BUTTON') {
+            // Check if current element is a button with task actions
+            if (targetEl.tagName === 'BUTTON' && targetEl.dataset.taskId) {
                 const taskId = parseInt(targetEl.dataset.taskId);
-                if (isNaN(taskId)) {
-                    targetEl = targetEl.parentNode;
-                    continue;
-                }
                 
-                if (targetEl.classList.contains('complete-btn') || targetEl.classList.contains('undo-btn')) {
-                    toggleTask(taskId);
-                } else if (targetEl.classList.contains('edit-btn')) {
-                    const task = tasks.find(t => t.id === taskId);
-                    if (task) openEditModal(task);
-                } else if (targetEl.classList.contains('delete-btn')) {
-                    deleteTask(taskId);
+                if (!isNaN(taskId)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (targetEl.classList.contains('complete-btn') || targetEl.classList.contains('undo-btn')) {
+                        toggleTask(taskId);
+                        return;
+                    } else if (targetEl.classList.contains('edit-btn')) {
+                        const task = tasks.find(t => t.id === taskId);
+                        if (task) {
+                            openEditModal(task);
+                        }
+                        return;
+                    } else if (targetEl.classList.contains('delete-btn')) {
+                        deleteTask(taskId);
+                        return;
+                    }
                 }
-                break;
             }
+            
             targetEl = targetEl.parentNode;
         }
     });

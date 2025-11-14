@@ -39,107 +39,26 @@ export function getTodayDateString() {
     return formatDateToString(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-// Play sound effect
+// Play sound effect - Always play una-usagi.mp3
 export function playSoundEffect(type) {
     if (!soundEnabled) return;
 
-    const effectName = soundEffectsConfig[type] || 'success1';
-    const audioContext = getAudioContext();
-
-    if (!audioContext) {
-        try {
-            createSimpleBeep(effectName);
-            return;
-        } catch (e) {
-            console.log('Web Audio API not supported');
-            return;
-        }
+    // Always play una-usagi.mp3 for all sound effects
+    try {
+        const audio = new Audio('./sounds/una-usagi.mp3');
+        audio.volume = 0.5;
+        audio.play().catch(err => {
+            console.log('Sound effect play failed:', err);
+            // Fallback: try with different path
+            const audio2 = new Audio('sounds/una-usagi.mp3');
+            audio2.volume = 0.5;
+            audio2.play().catch(err2 => {
+                console.log('Sound effect play failed with fallback path:', err2);
+            });
+        });
+    } catch (err) {
+        console.log('Error creating audio:', err);
     }
-
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    let frequency, duration, type_wave;
-
-    switch (effectName) {
-        case 'success1':
-        case 'success2':
-            frequency = type === 'achievement' ? 800 : 600;
-            duration = 0.2;
-            type_wave = 'sine';
-            break;
-        case 'bell':
-            frequency = 800;
-            duration = 0.5;
-            type_wave = 'sine';
-            break;
-        case 'ding':
-            frequency = 600;
-            duration = 0.15;
-            type_wave = 'sine';
-            break;
-        case 'pop':
-            frequency = 400;
-            duration = 0.1;
-            type_wave = 'sine';
-            break;
-        case 'click':
-            frequency = 1000;
-            duration = 0.05;
-            type_wave = 'square';
-            break;
-        case 'whoosh':
-            frequency = 300;
-            duration = 0.3;
-            type_wave = 'sawtooth';
-            break;
-        case 'trash':
-            frequency = 200;
-            duration = 0.2;
-            type_wave = 'sawtooth';
-            break;
-        case 'swoosh':
-            frequency = 400;
-            duration = 0.25;
-            type_wave = 'sine';
-            break;
-        case 'celebration':
-        case 'fanfare':
-        case 'victory':
-            playCelebrationSound();
-            return;
-        case 'tick':
-            frequency = 1000;
-            duration = 0.05;
-            type_wave = 'square';
-            break;
-        case 'tock':
-            frequency = 800;
-            duration = 0.05;
-            type_wave = 'square';
-            break;
-        case 'alarm':
-            frequency = 800;
-            duration = 0.3;
-            type_wave = 'sine';
-            break;
-        default:
-            frequency = 600;
-            duration = 0.2;
-            type_wave = 'sine';
-    }
-
-    oscillator.type = type_wave;
-    oscillator.frequency.value = frequency;
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + duration);
 }
 
 export function playCelebrationSound() {

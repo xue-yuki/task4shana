@@ -5,12 +5,10 @@
 import {
     musicState,
     ambientSounds,
-    soundEffectsConfig,
     playlists,
     soundEnabled
 } from './config.js';
 import { showNotification } from './ui.js';
-import { playSoundEffect, createSimpleBeep, playCelebrationSound } from './utils.js';
 
 // Initialize Music & Sound Features
 export function initMusicAndSound() {
@@ -48,7 +46,6 @@ export function initMusicAndSound() {
     initBackgroundMusic();
     initAmbientSounds();
     initWhiteNoise();
-    initSoundEffects();
     loadCustomTracks();
     updateMusicBadge();
 }
@@ -533,39 +530,6 @@ function stopWhiteNoise() {
         if (span) span.textContent = 'Mulai White Noise';
         if (icon) icon.className = 'fas fa-play';
     }
-}
-
-// Sound Effects
-function initSoundEffects() {
-    const enableSoundEffects = document.getElementById('enableSoundEffects');
-    const testEffectBtns = document.querySelectorAll('.test-effect-btn');
-    const effectSelects = document.querySelectorAll('.effect-select');
-    
-    if (enableSoundEffects) {
-        enableSoundEffects.checked = JSON.parse(localStorage.getItem('soundEffectsEnabled') || 'true');
-        
-        enableSoundEffects.addEventListener('change', (e) => {
-            const enabled = e.target.checked;
-            localStorage.setItem('soundEffectsEnabled', enabled);
-        });
-    }
-    
-    effectSelects.forEach(select => {
-        const effectType = select.getAttribute('data-effect');
-        select.value = soundEffectsConfig[effectType] || select.options[0].value;
-        
-        select.addEventListener('change', (e) => {
-            soundEffectsConfig[effectType] = e.target.value;
-            localStorage.setItem('soundEffectsConfig', JSON.stringify(soundEffectsConfig));
-        });
-    });
-    
-    testEffectBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const effectType = btn.getAttribute('data-effect');
-            playSoundEffect(effectType);
-        });
-    });
 }
 
 export function updateMusicBadge() {

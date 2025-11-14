@@ -39,13 +39,14 @@ export let whiteNoise = null;
 export let whiteNoiseNode = null;
 export let audioContext = null;
 
-// Sound Effects Configuration
+// Sound Effects Configuration - Default to una-usagi.mp3
 export let soundEffectsConfig = JSON.parse(localStorage.getItem('soundEffectsConfig')) || {
-    complete: 'success1',
-    add: 'pop',
-    delete: 'trash',
-    achievement: 'celebration',
-    timer: 'tick'
+    complete: 'una-usagi',
+    add: 'una-usagi',
+    delete: 'una-usagi',
+    achievement: 'una-usagi',
+    timer: 'una-usagi',
+    notification: 'una-usagi'
 };
 
 // Web3Forms Access Key - GANTI INI DENGAN ACCESS KEY KAMU!
@@ -100,6 +101,10 @@ export function setCurrentMonth(value) {
 
 export function setCurrentYear(value) {
     currentYear = value;
+}
+
+export function setCurrentEditTaskId(value) {
+    currentEditTaskId = value;
 }
 
 // Re-export playlists from data.js
